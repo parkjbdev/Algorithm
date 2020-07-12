@@ -12,16 +12,23 @@ class Solution {
 		HashMap<String, Boolean> map = new HashMap<>();
 		for(String phone : phone_book)
 		{
+			// (먼저 나온 번호의 자릿수) > (나중에 나온 번호의 자릿수)
+			if (map.get(phone) != null)
+				return false;
+			
 			for (int i = 1; i < phone.length(); i++)
 			{
-				if (map.get(phone.substring(0, i)) != null)
-				{
-					if (map.get(phone.substring(0, i))
-							|| (!map.get(phone.substring(0, i)) && phone.substring(0, i).equals(phone)))
+				//번호 substring 저장 되어 있을 경우
+				if (map.get(phone.substring(0, i)) != null) {
+					// (먼저 나온 번호의 자릿수) < (나중에 나온 번호의 자릿수)
+					if (map.get(phone.substring(0, i)))// phone의 앞자리 substring이 번호로 존재할 경우
 						return false;
 				}
-				else	map.put(phone.substring(0, i), false);
+				// 번호 substring 저장 안되어 있을때
+				else
+					map.put(phone.substring(0, i), false);
 			}
+			
 			map.put(phone, true);
 		}
 
