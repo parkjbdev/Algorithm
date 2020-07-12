@@ -1,5 +1,4 @@
-import java.util.Map;
-import java.util.HashMap;
+import java.util.ArrayList;
 class Solution {
 	public static void main(String[] args)
 	{
@@ -9,26 +8,17 @@ class Solution {
 
 	public static boolean solution(String[] phone_book) 
 	{
-		HashMap<String, Integer> map = new HashMap<>();
+		ArrayList<String> list = new ArrayList<>();
 
-		for (String phone : phone_book)
-		{
-			for (Map.Entry<String, Integer> entry : map.entrySet())
-			{
-				int length = phone.length() > entry.getKey().length() ? entry.getKey().length() : phone.length();
-
-				if (length == entry.getKey().length())
-				{
-					if(phone.substring(0, length).equals(entry.getKey()))	return false;
-				}
-				else
-				{
-					if (entry.getKey().substring(0, length).equals(phone))	return false;
-				}
+		for (String phonei : phone_book) {
+			for (String phonej : list) {
+				if ((phonei.length() > phonej.length() && phonei.substring(0, phonej.length()).equals(phonej))
+						|| (phonei.length() <= phonej.length() && phonej.substring(0, phonei.length()).equals(phonei)))
+					return false;
 			}
-			map.put(phone, map.getOrDefault(phone, 0) + 1);
+			list.add(phonei);
 		}
 
 		return true;
-    }
+	}
 }
