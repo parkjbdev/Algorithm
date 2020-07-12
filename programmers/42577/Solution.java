@@ -16,18 +16,13 @@ class Solution {
 			{
 				if (map.get(phone.substring(0, i)) != null)
 				{
-					if (map.get(phone.substring(0, i)))	return false;
-					else
-					{
-						if (phone.substring(0, i).equals(phone))	return false;
-					}
+					if (map.get(phone.substring(0, i))
+							|| (!map.get(phone.substring(0, i)) && phone.substring(0, i).equals(phone)))
+						return false;
 				}
-				else
-				{
-					map.put(phone.substring(0, i), false);
-					if (i == phone.length())	map.put(phone, true);
-				}
+				else	map.put(phone.substring(0, i), false);
 			}
+			map.put(phone, true);
 		}
 
 		return true;
