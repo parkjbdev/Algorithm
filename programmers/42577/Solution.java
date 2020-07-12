@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 class Solution {
 	public static void main(String[] args)
 	{
@@ -8,16 +7,9 @@ class Solution {
 
 	public static boolean solution(String[] phone_book) 
 	{
-		ArrayList<String> list = new ArrayList<>();
-
-		for (String phonei : phone_book) {
-			for (String phonej : list) {
-				if ((phonei.length() > phonej.length() && phonei.substring(0, phonej.length()).equals(phonej))
-						|| (phonei.length() <= phonej.length() && phonej.substring(0, phonei.length()).equals(phonei)))
-					return false;
-			}
-			list.add(phonei);
-		}
+		for (int i = 0; i < phone_book.length - 1; i++)
+			for(int j = i + 1;j < phone_book.length;j++)
+				if(phone_book[i].startsWith(phone_book[j]) || phone_book[j].startsWith(phone_book[i]))	return false;
 
 		return true;
 	}
