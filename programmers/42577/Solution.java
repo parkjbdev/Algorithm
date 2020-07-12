@@ -12,7 +12,7 @@ class Solution {
 		HashMap<String, Boolean> map = new HashMap<>();
 		for(String phone : phone_book)
 		{
-			for (int i = 1; i <= phone.length(); i++)
+			for (int i = 1; i < phone.length(); i++)
 			{
 				if (map.get(phone.substring(0, i)) != null)
 				{
