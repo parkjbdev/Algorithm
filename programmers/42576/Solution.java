@@ -1,3 +1,4 @@
+import java.util.Map;
 import java.util.HashMap;
 
 class Solution {
@@ -16,9 +17,11 @@ class Solution {
 		for(String key : participant)	map.put(key, map.getOrDefault(key, 0) + 1);
 		for(String key : completion)	map.replace(key, map.get(key) - 1);
 		
-		for (String key : map.keySet())
-			if (map.get(key) != 0)
-				return key;
+		for (Map.Entry<String, Integer> entry : map.entrySet())
+		{
+			if (entry.getValue() != 0)
+				return entry.getKey();
+		}
 
 		return "";
 	}
