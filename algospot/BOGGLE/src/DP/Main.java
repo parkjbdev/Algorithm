@@ -1,5 +1,6 @@
-import org.jetbrains.annotations.NotNull;
+package DP;
 
+import org.jetbrains.annotations.NotNull;
 import java.util.Scanner;
 
 class Word
@@ -48,8 +49,9 @@ class Coordinate
 	}
 }
 
-public class Boggle
+public class Main
 {
+	public static Scanner sc = new Scanner(System.in);
 	public static final int mapX = 5, mapY = 5;
 	public static int testCaseCnt;
 	public static char[][] gameBoard = new char[mapX][mapY];
@@ -67,9 +69,7 @@ public class Boggle
 
 	public static void main (String[] args)
 	{
-		Scanner sc = new Scanner(System.in);
 		testCaseCnt = sc.nextInt();
-
 		for(int testCase = 0;testCase < testCaseCnt;testCase++)
 		{
 			input();
@@ -81,18 +81,10 @@ public class Boggle
 
 	public static void input()
 	{
-		Scanner sc = new Scanner(System.in);
-
-		for(int i = 0;i < mapY;i++)
-		{
-			String tmp = sc.next();
-			gameBoard[i] = tmp.toCharArray();
-		}
+		for(int i = 0;i < mapY;i++)	gameBoard[i] = sc.next().toCharArray();
 
 		words = new Word[sc.nextInt()];
-		for (int i = 0;i < words.length;i++)
-			words[i] = new Word(sc.next());
-
+		for (int i = 0;i < words.length;i++)	words[i] = new Word(sc.next());
 	}
 
 	public static void output()
