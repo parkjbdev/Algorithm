@@ -43,6 +43,12 @@ class Coordinate
 		this.y = y;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "(" + x + ", " + y + ")";
+	}
+
 	public Coordinate add(@NotNull Coordinate c)
 	{
 		return new Coordinate(c.getX() + this.getX(), c.getY() + this.getY());
@@ -56,6 +62,7 @@ public class Main
 	public static int testCaseCnt;
 	public static char[][] gameBoard = new char[mapX][mapY];
 	public static Word[] words;
+	public static boolean DP[][][];
 	public static final Coordinate[] deltas = {
 			new Coordinate(-1, -1),
 			new Coordinate(-1, 0),
@@ -96,20 +103,29 @@ public class Main
 	public static void solve()
 	{
 		for (Word word : words)
-			for(int i = 0;i < mapX;i++) for(int j = 0;j < mapY;j++)
-				if(!word.isContain) word.isContain = hasWord(new Coordinate(i, j), word.word);
+		{
+			// initialization
+			DP = new boolean[mapX][mapY][word.word.length()];
+
+			for (int i = 0; i < mapX; i++)
+				for (int j = 0; j < mapY; j++)
+				{
+					if (!word.isContain)
+						word.isContain = hasWord(new Coordinate(i, j), word.word, 0);
+				}
+		}
 	}
 
-	public static boolean hasWord(Coordinate coordinate, String word)
+	public static boolean hasWord(Coordinate coordinate, String word, int index)
 	{
 		if(!inRange(coordinate))	return false;
-		if(gameBoard[coordinate.getX()][coordinate.getY()] != word.charAt(0))	return false;
-		if(word.length() == 1)	return true;
+		if(gameBoard[coordinate.getX()][coordinate.getY()] != word.charAt(index))	return false;
+		if(index + 1 == word.length())	return true;
 
 		for (Coordinate delta : deltas)
 		{
 			Coordinate nextCoordinate = coordinate.add(delta);
-			if(hasWord(nextCoordinate, word.substring(1))) return true;
+			if(hasWord(nextCoordinate, word, index + 1)) return true;
 		}
 		return false;
 	}
