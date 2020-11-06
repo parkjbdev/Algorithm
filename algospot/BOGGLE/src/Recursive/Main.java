@@ -16,8 +16,8 @@ class Word
 
 class Coordinate
 {
-	private int x;
-	private int y;
+	private final int x;
+	private final int y;
 
 	Coordinate(int x, int y)
 	{
@@ -32,15 +32,6 @@ class Coordinate
 	public int getY()
 	{
 		return y;
-	}
-
-	public void setX(int x)
-	{
-		this.x = x;
-	}
-	public void setY(int y)
-	{
-		this.y = y;
 	}
 
 	public Coordinate add(@NotNull Coordinate c)
@@ -96,20 +87,22 @@ public class Main
 	public static void solve()
 	{
 		for (Word word : words)
+			// Search word
 			for(int i = 0;i < mapX;i++) for(int j = 0;j < mapY;j++)
-				if(!word.isContain) word.isContain = hasWord(new Coordinate(i, j), word.word);
+				if(!word.isContain)
+					word.isContain = hasWord(new Coordinate(i, j), word.word, 0);
 	}
 
-	public static boolean hasWord(Coordinate coordinate, String word)
+	public static boolean hasWord(Coordinate coordinate, String word, int index)
 	{
 		if(!inRange(coordinate))	return false;
-		if(gameBoard[coordinate.getX()][coordinate.getY()] != word.charAt(0))	return false;
-		if(word.length() == 1)	return true;
+		if(gameBoard[coordinate.getX()][coordinate.getY()] != word.charAt(index))	return false;
+		if(index + 1 == word.length())	return true;
 
 		for (Coordinate delta : deltas)
 		{
 			Coordinate nextCoordinate = coordinate.add(delta);
-			if(hasWord(nextCoordinate, word.substring(1))) return true;
+			if(hasWord(nextCoordinate, word, index + 1)) return true;
 		}
 		return false;
 	}
