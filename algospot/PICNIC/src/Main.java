@@ -15,7 +15,7 @@ class Picnic
 	private int studentNum;
 	private Pair[] pairs;
 	private int Answer = 0;
-	static boolean[] isPaired;
+	private boolean[] isPaired;
 
 	public Picnic(Scanner sc)
 	{
@@ -48,7 +48,7 @@ class Picnic
 	public void recursive(boolean[] isPaired, int pairIdx)
 	{
 		// 모두 각자 짝이 있을 경우
-		if(countTrue(isPaired) == studentNum)
+		if(isAllTrue(isPaired))
 		{
 			Answer++;
 			return;
@@ -70,14 +70,13 @@ class Picnic
 		}
 
 		// 어느 하나라도 짝이 있는 경우 - 다음 pairIdx로 넘어감
-		else recursive(isPaired, pairIdx + 1);
+		recursive(isPaired, pairIdx + 1);
 	}
 
-	public int countTrue(boolean[] array)
+	public boolean isAllTrue(boolean[] array)
 	{
-		int cnt = 0;
-		for (boolean b : array) if (b) cnt++;
-		return cnt;
+		for (boolean b : array) if (!b) return false;
+		return true;
 	}
 }
 
