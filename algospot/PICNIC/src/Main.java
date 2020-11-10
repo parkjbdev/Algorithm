@@ -45,10 +45,10 @@ class Picnic
 	public void solve()
 	{
 		if (studentNum % 2 != 0) return;
-		recursive(isPaired, 0);
+		recursive(0);
 	}
 
-	public void recursive(boolean[] isPaired, int pairIdx)
+	public void recursive(int pairIdx)
 	{
 		// 모두 각자 짝이 있을 경우
 		if (isAllTrue(isPaired))
@@ -66,14 +66,14 @@ class Picnic
 			isPaired[pairs[pairIdx].pair1] = true;
 			isPaired[pairs[pairIdx].pair2] = true;
 
-			recursive(isPaired, pairIdx + 1);
+			recursive(pairIdx + 1);
 
 			isPaired[pairs[pairIdx].pair1] = false;
 			isPaired[pairs[pairIdx].pair2] = false;
 		}
 
 		// 어느 하나라도 짝이 있는 경우 - 다음 pairIdx로 넘어감
-		recursive(isPaired, pairIdx + 1);
+		recursive(pairIdx + 1);
 	}
 
 	public boolean isAllTrue(boolean[] array)
