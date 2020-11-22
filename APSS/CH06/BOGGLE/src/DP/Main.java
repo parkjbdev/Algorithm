@@ -107,6 +107,7 @@ public class Main
 		if(!inRange(coordinate))	return false;
 		if(gameBoard[coordinate.getX()][coordinate.getY()] != word.charAt(index))	return false;
 		if(index + 1 == word.length())	return true;
+		// return cached result
 		if(cache[coordinate.getX()][coordinate.getY()][index] != null)
 			return cache[coordinate.getX()][coordinate.getY()][index];
 
@@ -115,10 +116,12 @@ public class Main
 			Coordinate nextCoordinate = coordinate.add(delta);
 			if(hasWord(nextCoordinate, word, index + 1))
 			{
+				// cache result
 				cache[coordinate.getX()][coordinate.getY()][index] = true;
 				return true;
 			}
 		}
+		// cache result
 		cache[coordinate.getX()][coordinate.getY()][index] = false;
 		return false;
 	}
