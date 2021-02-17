@@ -2,20 +2,20 @@ import java.util.*;
 
 public class Prob2
 {
-	private final Customer[] customers;
+	private final String[] customers;
 	private final Map<String, Integer>[] courses;
 	private final int[] courseMenuNums;
 
 	public Prob2(String[] orders, int[] courseMenuNums)
 	{
-		customers = new Customer[orders.length];
+		customers = new String[orders.length];
 		courses = new Map[courseMenuNums.length];
 
 		for (int i = 0; i < orders.length; i++)
 		{
 			char[] tmp = orders[i].toCharArray();
 			Arrays.sort(tmp);
-			customers[i] = new Customer(new String(tmp));
+			customers[i] = new String(tmp);
 		}
 
 		this.courseMenuNums = courseMenuNums;
@@ -23,11 +23,11 @@ public class Prob2
 
 	public String[] solve()
 	{
-		for (Customer customer: customers) {
+		for (String customer: customers) {
 			for (int i = 0; i < courses.length; i++)
 			{
-				if(courses[i] == null)	courses[i] = new TreeMap<String, Integer>();
-				combine(courses[i], new StringBuilder(), customer.orderString, courseMenuNums[i]);
+				if(courses[i] == null)	courses[i] = new TreeMap<>();
+				combine(courses[i], new StringBuilder(), customer, courseMenuNums[i]);
 			}
 		}
 
@@ -66,47 +66,5 @@ public class Prob2
 			combine(save,sb, base.substring(i + 1), combNum - 1);
 			sb.deleteCharAt(sb.length() - 1);
 		}
-	}
-
-	// Customer Class
-	private class Customer
-	{
-		public final String orderString;
-
-		public Customer(String orders)
-		{
-			this.orderString = orders;
-		}
-
-		public boolean isExist(Character menu)
-		{
-			return orderString.contains(menu.toString());
-		}
-
-		public boolean isExist(Character[] menus)
-		{
-			for (Character menu : menus)
-				if (!orderString.contains(menu.toString()))
-					return false;
-
-			return true;
-		}
-
-		public boolean isExist(String menusString)
-		{
-			Character[] menus = Utils.split(menusString);
-			return isExist(menus);
-		}
-	}
-}
-
-class Utils
-{
-	public static Character[] split(String str)
-	{
-		Character[] chars = new Character[str.length()];
-		for (int i = 0; i < str.length(); i++)
-			chars[i] = str.charAt(i);
-		return chars;
 	}
 }
