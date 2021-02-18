@@ -27,7 +27,12 @@ public class Prob3
 					add(score);
 				}});
 			}
-			else this.infoMap.get(hash).add(score);
+			else
+			{
+				ArrayList<Integer> scoreArr = this.infoMap.get(hash);
+				scoreArr.add(score);
+				Collections.sort(scoreArr);
+			}
 		}
 	}
 
@@ -66,9 +71,14 @@ public class Prob3
 		for (int hash : hashCombination)
 		{
 			List<Integer> scoreArr = infoMap.get(hash);
-			if (scoreArr != null)
-				for (int score : scoreArr)
-					if (score >= targetScore) cnt++;
+			if (scoreArr == null) continue;
+			int lowerCount = Collections.binarySearch(scoreArr, targetScore);
+			if (lowerCount < 0) lowerCount = -lowerCount - 1;
+			else if (scoreArr.get(lowerCount) == targetScore)
+				while (lowerCount > 0 && scoreArr.get(lowerCount - 1) == targetScore)
+					lowerCount--;
+
+			cnt += scoreArr.size() - lowerCount;
 		}
 
 		return cnt;
@@ -87,8 +97,7 @@ public class Prob3
 		public static int createZeroHash(String[] split)
 		{
 			for (int i = 0; i < split.length; i++)
-				if (split[i].equals("-"))
-					split[i] = "none";
+				if (split[i].equals("-")) split[i] = "none";
 
 			return createHash(split);
 		}
