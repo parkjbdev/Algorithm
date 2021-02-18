@@ -30,8 +30,9 @@ public class Prob3
 			else
 			{
 				ArrayList<Integer> scoreArr = this.infoMap.get(hash);
-				scoreArr.add(score);
-				Collections.sort(scoreArr);
+				int idx = Collections.binarySearch(scoreArr, score);
+				if(idx < 0)	idx = -idx - 1;
+				scoreArr.add(idx, score);
 			}
 		}
 	}
