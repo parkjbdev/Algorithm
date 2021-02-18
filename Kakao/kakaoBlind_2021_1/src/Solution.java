@@ -16,10 +16,8 @@ public class Solution
 
 	public static void main(String[] args)
 	{
-//		new Prob1(input());
-		String[] orders = {"ABCDE", "AB", "CD", "ADE", "XYZ", "XYZ", "ACD"};
-		int[] course = {2, 3, 5};
-		String[] ans = new Prob2(orders, course).solve();
-		System.out.println(Arrays.toString(ans));
+		String[] info = {"java backend junior pizza 150","python frontend senior chicken 210","python frontend senior chicken 150","cpp backend senior pizza 260","java backend junior chicken 80","python backend senior chicken 50"};
+		String[] query= {"java and backend and junior and pizza 100","python and frontend and senior and chicken 200","cpp and - and senior and pizza 250","- and backend and senior and - 150","- and - and - and chicken 100","- and - and - and - 150"};
+		System.out.println(Arrays.toString(new Prob3(info, query).solve()));
 	}
 }
