@@ -98,6 +98,7 @@ class Test
 
 public class Solution
 {
+	public static final boolean debug = true;
 	public static String input()
 	{
 		String str = "";
@@ -115,34 +116,24 @@ public class Solution
 
 	public static void main(String[] args)
 	{
-		String[] info = Test.Prob2.createInfo(50000);
-		String[] query = Test.Prob2.createQuery(100000);
+		int[] n = {6, 7, 8};
+		int[] s = {4, 3, 4};
+		int[] a = {6, 4, 5};
+		int[] b = {2, 1, 6};
+		int[][][] fares = {
+				{{4, 1, 10}, {3, 5, 24}, {5, 6, 2}, {3, 1, 41}, {5, 1, 24}, {4, 6, 50}, {2, 4, 66}, {2, 3, 22}, {1, 6, 25}},
+				{{5, 7, 9}, {4, 6, 4}, {3, 6, 1}, {3, 2, 3}, {2, 1, 6}},
+				{{2,6,6}, {6,3,7}, {4,6,7}, {6,5,11}, {2,5,12}, {5,3,20}, {2,4,8}, {4,3,9}}
+		};
 
 		long beforeTime, afterTime;
 
-		beforeTime = System.currentTimeMillis();
-		int[] result = new Prob3(info, query).solve();
-		afterTime = System.currentTimeMillis();
-		System.out.println((afterTime - beforeTime) + " ms");
-
-		beforeTime = System.currentTimeMillis();
-		int[] answer = new Prob3Test().solution(info, query);
-		afterTime = System.currentTimeMillis();
-		System.out.println((afterTime - beforeTime) + " ms");
-
-		if (result.length != answer.length)
+		for(int i = 0;i < 3;i++)
 		{
-			System.out.println("Wrong");
-			return;
+			beforeTime = System.currentTimeMillis();
+			System.out.println(new Prob4(n[i], s[i], a[i], b[i], fares[i]).solve());
+			afterTime = System.currentTimeMillis();
+			System.out.println((afterTime - beforeTime) + " ms");
 		}
-		else for (int i = 0; i < result.length; i++)
-		{
-			if (result[i] != answer[i])
-			{
-				System.out.println("Wrong");
-				return;
-			}
-		}
-		System.out.println("Success");
 	}
 }
