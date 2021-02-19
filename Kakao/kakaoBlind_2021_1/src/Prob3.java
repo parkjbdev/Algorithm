@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Prob3
 {
-	Map<Integer, ArrayList<Integer>> infoMap = new HashMap<>();
+	ArrayList<Integer>[][][][] info = new ArrayList[4][3][3][3];
 	int[][] queries;
 
 	public Prob3(String[] infos, String[] queries)
@@ -16,66 +16,51 @@ public class Prob3
 		for (String info : infos)
 		{
 			String[] infoSplit = info.split(" ");
-
-			int hash = Hash.createHash(infoSplit);
-			int score = Integer.parseInt(infoSplit[4]);
-
-			addNewInfo(hash, score);
+			addNewInfo(infoSplit);
 		}
 	}
 
-	private void addNewInfo(int newHash, int score)
+	private void addNewInfo(String[] splitedString)
 	{
-		// TODO: hash combination
-		int[] hashCombination = hashCombiner(newHash);
+		int[] location = new int[4];
+		int[] map = {Language.valueOf(splitedString[0]).ordinal(), Apply.valueOf(splitedString[1]).ordinal(), Career.valueOf(splitedString[2]).ordinal(), SoulFood.valueOf(splitedString[3]).ordinal()};
 
-		for(int hash: hashCombination)
+		for (int combNum = 0; combNum < 16; combNum++)
 		{
-			if (!this.infoMap.containsKey(hash))
-			{
-				this.infoMap.put(hash, new ArrayList<>()
-				{{
-					add(score);
-				}});
-			}
-			else
-			{
-				ArrayList<Integer> scoreArr = this.infoMap.get(hash);
-				int idx = Collections.binarySearch(scoreArr, score);
-				if (idx < 0) idx = -idx - 1;
-				scoreArr.add(idx, score);
-			}
-		}
-	}
+			if ((combNum & 1) != 0) location[0] = map[0];
+			else location[0] = 0;
 
-	private int[] hashCombiner(int hash)
-	{
-		int[] hashes = new int[16];
-		String hashStr = String.format("%04d", hash);
-		for(int i = 0;i < 16;i++)
-		{
-			String bin = String.format("%04d" , Integer.parseInt(Integer.toBinaryString(i)));
-			StringBuilder newString = new StringBuilder();
-			for(int j = 0;j < 4;j++)
-			{
-				if(j < bin.length() && bin.charAt(j) != '0')	newString.append(hashStr.charAt(j));
-				else newString.append('0');
-			}
-			hashes[i] = Integer.parseInt(newString.toString());
+			if ((combNum & 2) != 0) location[1] = map[1];
+			else location[1] = 0;
+
+			if ((combNum & 4) != 0) location[2] = map[2];
+			else location[2] = 0;
+
+			if ((combNum & 8) != 0) location[3] = map[3];
+			else location[3] = 0;
+
+			if (info[location[0]][location[1]][location[2]][location[3]] == null)
+				info[location[0]][location[1]][location[2]][location[3]] = new ArrayList<>();
+
+			int score = Integer.parseInt(splitedString[4]);
+			int idx = lowerBound(info[location[0]][location[1]][location[2]][location[3]], score);
+			info[location[0]][location[1]][location[2]][location[3]].add(idx, score);
 		}
-		return hashes;
 	}
 
 	private void saveQuery(String[] queries)
 	{
-		int cnt = 0;
-		this.queries = new int[queries.length][2];
+		this.queries = new int[queries.length][5];
 
-		for (String query : queries)
+		for (int i = 0; i < queries.length; i++)
 		{
-			String[] splitQuery = query.split("( and )| ");
-			this.queries[cnt][0] = Hash.createZeroHash(splitQuery);    // Hash
-			this.queries[cnt++][1] = Integer.parseInt(splitQuery[4]);    // Score
+			String[] splitQuery = queries[i].replaceAll("-", "none").split("( and )| ");
+
+			this.queries[i][0] = Language.valueOf(splitQuery[0]).ordinal();
+			this.queries[i][1] = Apply.valueOf(splitQuery[1]).ordinal();
+			this.queries[i][2] = Career.valueOf(splitQuery[2]).ordinal();
+			this.queries[i][3] = SoulFood.valueOf(splitQuery[3]).ordinal();
+			this.queries[i][4] = Integer.parseInt(splitQuery[4]);
 		}
 	}
 
@@ -83,15 +68,15 @@ public class Prob3
 	{
 		int[] queryResult = new int[queries.length];
 		for (int i = 0; i < queries.length; i++)
-			queryResult[i] = counter(queries[i][0], queries[i][1]);
+			queryResult[i] = counter(queries[i], queries[i][4]);
 
 		return queryResult;
 	}
 
-	private int counter(int hash, int targetScore)
+	private int counter(int[] location, int targetScore)
 	{
 		int cnt = 0;
-		List<Integer> scoreArr = infoMap.get(hash);
+		List<Integer> scoreArr = info[location[0]][location[1]][location[2]][location[3]];
 		if (scoreArr == null) return cnt;
 
 		int lowerCount = lowerBound(scoreArr, targetScore);
@@ -112,35 +97,9 @@ public class Prob3
 		}
 		return low;
 	}
-
-	private static class Hash
-	{
-		public static int createHash(String[] split)
-		{
-			return Language.valueOf(split[0]).ordinal() * 1000 +
-					Apply.valueOf(split[1]).ordinal() * 100 +
-					Career.valueOf(split[2]).ordinal() * 10 +
-					SoulFood.valueOf(split[3]).ordinal();
-		}
-
-		public static int createZeroHash(String[] split)
-		{
-			for (int i = 0; i < split.length; i++)
-				if (split[i].equals("-")) split[i] = "none";
-
-			return createHash(split);
-		}
-	}
 }
 
-enum Language
-{none, cpp, java, python}
-
-enum Apply
-{none, backend, frontend}
-
-enum Career
-{none, junior, senior}
-
-enum SoulFood
-{none, chicken, pizza}
+enum Language {none, cpp, java, python}
+enum Apply {none, backend, frontend}
+enum Career {none, junior, senior}
+enum SoulFood {none, chicken, pizza}

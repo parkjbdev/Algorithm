@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 class Test
 {
@@ -115,21 +116,33 @@ public class Solution
 	public static void main(String[] args)
 	{
 		String[] info = Test.Prob2.createInfo(50000);
-//		String[] query = Test.Prob2.createQuery(100000);
-		String[] query = Test.Prob2.createWhiteQuery(100000);
+		String[] query = Test.Prob2.createQuery(100000);
 
 		long beforeTime, afterTime;
 
 		beforeTime = System.currentTimeMillis();
-		new Prob3(info, query).solve();
+		int[] result = new Prob3(info, query).solve();
 		afterTime = System.currentTimeMillis();
 		System.out.println((afterTime - beforeTime) + " ms");
 
 		beforeTime = System.currentTimeMillis();
-		new Prob3Test().solution(info, query);
+		int[] answer = new Prob3Test().solution(info, query);
 		afterTime = System.currentTimeMillis();
 		System.out.println((afterTime - beforeTime) + " ms");
 
-//		System.out.println(Arrays.toString(new Prob3(info, query).solve()));
+		if (result.length != answer.length)
+		{
+			System.out.println("Wrong");
+			return;
+		}
+		else for (int i = 0; i < result.length; i++)
+		{
+			if (result[i] != answer[i])
+			{
+				System.out.println("Wrong");
+				return;
+			}
+		}
+		System.out.println("Success");
 	}
 }
