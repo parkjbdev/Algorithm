@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
 class Test
 {
@@ -12,7 +11,7 @@ class Test
 		static String[] career = {"-", "junior", "senior"};
 		static String[] soulFood = {"-", "chicken", "pizza"};
 
-		public static String[] createProb2Info(int max)
+		public static String[] createInfo(int max)
 		{
 			String[] info = new String[max];
 			for (int i = 0; i < max; i++)
@@ -34,7 +33,7 @@ class Test
 			return info;
 		}
 
-		public static String[] createProb2Query(int max)
+		public static String[] createQuery(int max)
 		{
 			String[] query = new String[max];
 			for (int i = 0; i < max; i++)
@@ -67,6 +66,32 @@ class Test
 
 			return query;
 		}
+
+		public static String[] createWhiteQuery(int max)
+		{
+			String[] query = new String[max];
+			for (int i = 0; i < max; i++)
+			{
+				StringBuilder strBuilder = new StringBuilder();
+
+				strBuilder.append("-");
+				strBuilder.append(" and ");
+
+				strBuilder.append("-");
+				strBuilder.append(" and ");
+
+				strBuilder.append("-");
+				strBuilder.append(" and ");
+
+				strBuilder.append("-");
+				strBuilder.append(" ");
+
+				strBuilder.append((int) (Math.random() * 100000));
+				query[i] = strBuilder.toString();
+			}
+
+			return query;
+		}
 	}
 }
 
@@ -89,15 +114,22 @@ public class Solution
 
 	public static void main(String[] args)
 	{
-		String[] info = Test.Prob2.createProb2Info(50000);
-		String[] query = Test.Prob2.createProb2Query(100000);
-//		String[] info = {"java backend junior pizza 150", "java backend junior pizza 150","java backend junior pizza 100","java backend junior pizza 150","java backend junior pizza 150","python frontend senior chicken 210","python frontend senior chicken 150","cpp backend senior pizza 260","java backend junior chicken 80","python backend senior chicken 50"};
-//		String[] query= {"java and backend and junior and pizza 125","python and frontend and senior and chicken 200","cpp and - and senior and pizza 250","- and backend and senior and - 150","- and - and - and chicken 100","- and - and - and - 150"};
-		long beforeTime = System.currentTimeMillis();
-		int[] result = new Prob3(info, query).solve();
-		long afterTime = System.currentTimeMillis();
-		System.out.println(Arrays.toString(result));
+		String[] info = Test.Prob2.createInfo(50000);
+//		String[] query = Test.Prob2.createQuery(100000);
+		String[] query = Test.Prob2.createWhiteQuery(100000);
+
+		long beforeTime, afterTime;
+
+		beforeTime = System.currentTimeMillis();
+		new Prob3(info, query).solve();
+		afterTime = System.currentTimeMillis();
 		System.out.println((afterTime - beforeTime) + " ms");
+
+		beforeTime = System.currentTimeMillis();
+		new Prob3Test().solution(info, query);
+		afterTime = System.currentTimeMillis();
+		System.out.println((afterTime - beforeTime) + " ms");
+
 //		System.out.println(Arrays.toString(new Prob3(info, query).solve()));
 	}
 }
