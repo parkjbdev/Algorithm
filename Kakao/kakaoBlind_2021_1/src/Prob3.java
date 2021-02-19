@@ -20,20 +20,25 @@ public class Prob3
 			int hash = Hash.createHash(infoSplit);
 			int score = Integer.parseInt(infoSplit[4]);
 
-			if (!this.infoMap.containsKey(hash))
-			{
-				this.infoMap.put(hash, new ArrayList<>()
-				{{
-					add(score);
-				}});
-			}
-			else
-			{
-				ArrayList<Integer> scoreArr = this.infoMap.get(hash);
-				int idx = Collections.binarySearch(scoreArr, score);
-				if(idx < 0)	idx = -idx - 1;
-				scoreArr.add(idx, score);
-			}
+			addNewInfo(hash, score);
+		}
+	}
+
+	private void addNewInfo(int hash, int score)
+	{
+		if (!this.infoMap.containsKey(hash))
+		{
+			this.infoMap.put(hash, new ArrayList<>()
+			{{
+				add(score);
+			}});
+		}
+		else
+		{
+			ArrayList<Integer> scoreArr = this.infoMap.get(hash);
+			int idx = Collections.binarySearch(scoreArr, score);
+			if(idx < 0)	idx = -idx - 1;
+			scoreArr.add(idx, score);
 		}
 	}
 
@@ -45,23 +50,18 @@ public class Prob3
 		for (String query : queries)
 		{
 			String[] splitQuery = query.split("( and )| ");
-			this.queries[cnt][0] = Hash.createZeroHash(splitQuery);
-			this.queries[cnt++][1] = Integer.parseInt(splitQuery[4]);
+			this.queries[cnt][0] = Hash.createZeroHash(splitQuery);	// Hash
+			this.queries[cnt++][1] = Integer.parseInt(splitQuery[4]);	// Score
 		}
 	}
 
 	public int[] solve()
 	{
-		int[] answer = new int[queries.length];
+		int[] queryResult = new int[queries.length];
 		for (int i = 0; i < queries.length; i++)
-		{
-			int hash = queries[i][0];
-			int score = queries[i][1];
+			queryResult[i] = counter(queries[i][0], queries[i][1]);
 
-			answer[i] += counter(hash, score);
-		}
-
-		return answer;
+		return queryResult;
 	}
 
 	private int counter(int zeroHash, int targetScore)
@@ -73,16 +73,25 @@ public class Prob3
 		{
 			List<Integer> scoreArr = infoMap.get(hash);
 			if (scoreArr == null) continue;
-			int lowerCount = Collections.binarySearch(scoreArr, targetScore);
-			if (lowerCount < 0) lowerCount = -lowerCount - 1;
-			else if (scoreArr.get(lowerCount) == targetScore)
-				while (lowerCount > 0 && scoreArr.get(lowerCount - 1) == targetScore)
-					lowerCount--;
+			int lowerCount = lowerBound(scoreArr, targetScore);
 
 			cnt += scoreArr.size() - lowerCount;
 		}
 
 		return cnt;
+	}
+
+	private int lowerBound(List<Integer> list, int key)
+	{
+		int low = 0;
+		int high = list.size();
+		while(low < high)
+		{
+			int mid = low + (high - low) / 2;
+			if(key <= list.get(mid))	high = mid;
+			else low = mid + 1;
+		}
+		return low;
 	}
 
 	private static class Hash
@@ -138,15 +147,7 @@ public class Prob3
 	}
 }
 
-
-enum Language
-{none, cpp, java, python}
-
-enum Apply
-{none, backend, frontend}
-
-enum Career
-{none, junior, senior}
-
-enum SoulFood
-{none, chicken, pizza}
+enum Language {none, cpp, java, python}
+enum Apply {none, backend, frontend}
+enum Career {none, junior, senior}
+enum SoulFood {none, chicken, pizza}
