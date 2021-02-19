@@ -24,22 +24,46 @@ public class Prob3
 		}
 	}
 
-	private void addNewInfo(int hash, int score)
+	private void addNewInfo(int newHash, int score)
 	{
-		if (!this.infoMap.containsKey(hash))
+		// TODO: hash combination
+		int[] hashCombination = hashCombiner(newHash);
+
+		for(int hash: hashCombination)
 		{
-			this.infoMap.put(hash, new ArrayList<>()
-			{{
-				add(score);
-			}});
+			if (!this.infoMap.containsKey(hash))
+			{
+				this.infoMap.put(hash, new ArrayList<>()
+				{{
+					add(score);
+				}});
+			}
+			else
+			{
+				ArrayList<Integer> scoreArr = this.infoMap.get(hash);
+				int idx = Collections.binarySearch(scoreArr, score);
+				if (idx < 0) idx = -idx - 1;
+				scoreArr.add(idx, score);
+			}
 		}
-		else
+	}
+
+	private int[] hashCombiner(int hash)
+	{
+		int[] hashes = new int[16];
+		String hashStr = String.format("%04d", hash);
+		for(int i = 0;i < 16;i++)
 		{
-			ArrayList<Integer> scoreArr = this.infoMap.get(hash);
-			int idx = Collections.binarySearch(scoreArr, score);
-			if(idx < 0)	idx = -idx - 1;
-			scoreArr.add(idx, score);
+			String bin = String.format("%04d" , Integer.parseInt(Integer.toBinaryString(i)));
+			StringBuilder newString = new StringBuilder();
+			for(int j = 0;j < 4;j++)
+			{
+				if(j < bin.length() && bin.charAt(j) != '0')	newString.append(hashStr.charAt(j));
+				else newString.append('0');
+			}
+			hashes[i] = Integer.parseInt(newString.toString());
 		}
+		return hashes;
 	}
 
 	private void saveQuery(String[] queries)
@@ -50,8 +74,8 @@ public class Prob3
 		for (String query : queries)
 		{
 			String[] splitQuery = query.split("( and )| ");
-			this.queries[cnt][0] = Hash.createZeroHash(splitQuery);	// Hash
-			this.queries[cnt++][1] = Integer.parseInt(splitQuery[4]);	// Score
+			this.queries[cnt][0] = Hash.createZeroHash(splitQuery);    // Hash
+			this.queries[cnt++][1] = Integer.parseInt(splitQuery[4]);    // Score
 		}
 	}
 
@@ -64,19 +88,14 @@ public class Prob3
 		return queryResult;
 	}
 
-	private int counter(int zeroHash, int targetScore)
+	private int counter(int hash, int targetScore)
 	{
 		int cnt = 0;
-		Integer[] hashCombination = Hash.combineZeroHash(zeroHash);
+		List<Integer> scoreArr = infoMap.get(hash);
+		if (scoreArr == null) return cnt;
 
-		for (int hash : hashCombination)
-		{
-			List<Integer> scoreArr = infoMap.get(hash);
-			if (scoreArr == null) continue;
-			int lowerCount = lowerBound(scoreArr, targetScore);
-
-			cnt += scoreArr.size() - lowerCount;
-		}
+		int lowerCount = lowerBound(scoreArr, targetScore);
+		cnt = scoreArr.size() - lowerCount;
 
 		return cnt;
 	}
@@ -85,10 +104,10 @@ public class Prob3
 	{
 		int low = 0;
 		int high = list.size();
-		while(low < high)
+		while (low < high)
 		{
 			int mid = low + (high - low) / 2;
-			if(key <= list.get(mid))	high = mid;
+			if (key <= list.get(mid)) high = mid;
 			else low = mid + 1;
 		}
 		return low;
@@ -111,43 +130,17 @@ public class Prob3
 
 			return createHash(split);
 		}
-
-		public static Integer[] combineZeroHash(int hash)
-		{
-			ArrayList<Integer> list = new ArrayList<>();
-			recursion(hash, list);
-
-			return list.toArray(new Integer[0]);
-		}
-
-		private static void recursion(int hash, ArrayList<Integer> save)
-		{
-			String hashString = String.format("%04d", hash);
-
-			int language = Character.getNumericValue(hashString.charAt(0));
-			int apply = Character.getNumericValue(hashString.charAt(1));
-			int career = Character.getNumericValue(hashString.charAt(2));
-			int soulFood = Character.getNumericValue(hashString.charAt(3));
-
-			if (language != 0 && apply != 0 && career != 0 && soulFood != 0)
-			{
-				save.add(hash);
-				return;
-			}
-
-			if (language == 0)
-				for (int i = 1; i < 4; i++) recursion(hash + i * 1000, save);
-			if (apply == 0 && language != 0)
-				for (int i = 1; i < 3; i++) recursion(hash + i * 100, save);
-			if (career == 0 && language != 0 && apply != 0)
-				for (int i = 1; i < 3; i++) recursion(hash + i * 10, save);
-			if (soulFood == 0 && language != 0 && apply != 0 && career != 0)
-				for (int i = 1; i < 3; i++) recursion(hash + i, save);
-		}
 	}
 }
 
-enum Language {none, cpp, java, python}
-enum Apply {none, backend, frontend}
-enum Career {none, junior, senior}
-enum SoulFood {none, chicken, pizza}
+enum Language
+{none, cpp, java, python}
+
+enum Apply
+{none, backend, frontend}
+
+enum Career
+{none, junior, senior}
+
+enum SoulFood
+{none, chicken, pizza}
