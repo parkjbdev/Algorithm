@@ -115,14 +115,12 @@ public class Solution
 
 	public static void main(String[] args)
 	{
-		int[] n = {6, 7, 8};
-		int[] s = {4, 3, 4};
-		int[] a = {6, 4, 5};
-		int[] b = {2, 1, 6};
-		int[][][] fares = {
-				{{4, 1, 10}, {3, 5, 24}, {5, 6, 2}, {3, 1, 41}, {5, 1, 24}, {4, 6, 50}, {2, 4, 66}, {2, 3, 22}, {1, 6, 25}},
-				{{5, 7, 9}, {4, 6, 4}, {3, 6, 1}, {3, 2, 3}, {2, 1, 6}},
-				{{2,6,6}, {6,3,7}, {4,6,7}, {6,5,11}, {2,5,12}, {5,3,20}, {2,4,8}, {4,3,9}}
+		String[] play_time = {"02:03:55", "99:59:59", "50:00:00"};
+		String[] adv_time = {"00:14:15", "25:00:00", "50:00:00"};
+		String[][] logs = {
+				{"01:20:15-01:45:14", "00:40:31-01:00:00", "00:25:50-00:48:29", "01:30:59-01:53:29", "01:37:44-02:02:30"},
+				{"69:59:59-89:59:59", "01:00:00-21:00:00", "79:59:59-99:59:59", "11:00:00-31:00:00"},
+				{"15:36:51-38:21:49", "10:14:18-15:36:51", "38:21:49-42:51:45"}
 		};
 
 		long beforeTime, afterTime;
@@ -130,7 +128,7 @@ public class Solution
 		for(int i = 0;i < 3;i++)
 		{
 			beforeTime = System.currentTimeMillis();
-			System.out.println(new Prob4(n[i], s[i], a[i], b[i], fares[i]).solve());
+			System.out.println(new Prob5(play_time[i], adv_time[i], logs[i]).solve());
 			afterTime = System.currentTimeMillis();
 			System.out.println((afterTime - beforeTime) + " ms");
 		}
