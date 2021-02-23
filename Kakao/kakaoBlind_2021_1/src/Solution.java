@@ -98,7 +98,6 @@ class Test
 
 public class Solution
 {
-	public static final boolean debug = true;
 	public static String input()
 	{
 		String str = "";
