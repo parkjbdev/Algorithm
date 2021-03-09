@@ -16,7 +16,7 @@ public class Prob5
 		{
 			String[] tmp = logs[i].split("-");
 			this.logs[i] = new Log(getIntTime(tmp[0]), getIntTime(tmp[1]));
-			if(debug) System.out.println("log: " + this.logs[i].startTime + " ~ " + this.logs[i].endTime);
+			if(debug) System.out.println("log[" + i + "]: " + this.logs[i].startTime + " ~ " + this.logs[i].endTime);
 		}
 	}
 
