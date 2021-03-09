@@ -15,28 +15,24 @@ def solution42587(priorities, location):
 
     priority = len(pList) - 1
     pCnt = 0
-    print(pList)
-
     cnt = 0
 
-    while True:
+    while priorities:
         # Init Priority vars when all completed
         if pCnt == pList[priority]:
             priority -= 1
-            while pList[priority] == 0:
-                priority -= 1
+            while pList[priority] == 0: priority -= 1
             pCnt = 0
 
         if priority == priorities[0]:
             pCnt += 1
             cnt += 1
-            if location == 0:
-                break
+            if location == 0: break
 
-        # 꺼내서 뒤에 붙히기
+        # 프린트할 우선순위가 아니라면 꺼내서 뒤에 붙히기
         location = location - 1 if location > 0 else location + len(priorities) - 1
         tmp = priorities.pop(0)
-        priorities.append(tmp)
+        priority > tmp and priorities.append(tmp)
 
     return cnt
 
