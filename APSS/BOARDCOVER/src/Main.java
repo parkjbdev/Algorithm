@@ -1,3 +1,4 @@
+package BOARDCOVER;
 import java.util.Scanner;
 
 class Pair

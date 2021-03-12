@@ -1,4 +1,4 @@
-package Recursive;
+package BOGGLE;
 
 import org.jetbrains.annotations.NotNull;
 import java.util.Scanner;
@@ -47,6 +47,7 @@ public class Main
 	public static int testCaseCnt;
 	public static char[][] gameBoard = new char[mapX][mapY];
 	public static Word[] words;
+	public static Boolean[][][] cache;
 	public static final Coordinate[] deltas = {
 			new Coordinate(-1, -1),
 			new Coordinate(-1, 0),
@@ -87,10 +88,18 @@ public class Main
 	public static void solve()
 	{
 		for (Word word : words)
+		{
+			// Initialization
+			cache = new Boolean[mapX][mapY][word.word.length()];
+			for(int i = 0;i < mapX;i++)	for(int j = 0;j < mapY;j++)
+				for(int k = 0;k < word.word.length();k++)
+					cache[i][j][k] = null;
+
 			// Search word
-			for(int i = 0;i < mapX;i++) for(int j = 0;j < mapY;j++)
-				if(!word.isContain)
+			for (int i = 0; i < mapX; i++) for (int j = 0; j < mapY; j++)
+				if (!word.isContain)
 					word.isContain = hasWord(new Coordinate(i, j), word.word, 0);
+		}
 	}
 
 	public static boolean hasWord(Coordinate coordinate, String word, int index)
@@ -98,12 +107,22 @@ public class Main
 		if(!inRange(coordinate))	return false;
 		if(gameBoard[coordinate.getX()][coordinate.getY()] != word.charAt(index))	return false;
 		if(index + 1 == word.length())	return true;
+		// return cached result
+		if(cache[coordinate.getX()][coordinate.getY()][index] != null)
+			return cache[coordinate.getX()][coordinate.getY()][index];
 
 		for (Coordinate delta : deltas)
 		{
 			Coordinate nextCoordinate = coordinate.add(delta);
-			if(hasWord(nextCoordinate, word, index + 1)) return true;
+			if(hasWord(nextCoordinate, word, index + 1))
+			{
+				// cache result
+				cache[coordinate.getX()][coordinate.getY()][index] = true;
+				return true;
+			}
 		}
+		// cache result
+		cache[coordinate.getX()][coordinate.getY()][index] = false;
 		return false;
 	}
 
