@@ -1,6 +1,4 @@
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Prob5
 {
@@ -8,6 +6,7 @@ public class Prob5
 	int playTime, adTime;
 	TimeStartEnd[] logs;
 	int[] timePoints;
+	Map<Integer, Integer> timePointMap;
 
 	public Prob5(String play_time, String adv_time, String[] logs)
 	{
@@ -19,21 +18,21 @@ public class Prob5
 		this.logs = new TimeStartEnd[logs.length];
 		for (int i = 0; i < logs.length; i++)
 		{
-			String[] tmp = logs[i].split("-");
-			this.logs[i] = new TimeStartEnd(getIntTime(tmp[0]), getIntTime(tmp[1]));
+			int start = getIntTime(logs[i].substring(0, 8));
+			int end = getIntTime(logs[i].substring(9));
+			this.logs[i] = new TimeStartEnd(start, end);
 			if (debug) System.out.println("log[" + i + "]: " + this.logs[i].start + " ~ " + this.logs[i].end);
 		}
 		timePoints = createTimePoints();
+		timePointMap = createTimePointMap(timePoints);
 		if (debug) System.out.println(Arrays.toString(timePoints));
 	}
 
 	private int getIntTime(String strTime)
 	{
-		String[] time = strTime.split(":");
-
-		int hour = Integer.parseInt(time[0]);
-		int minute = Integer.parseInt(time[1]);
-		int second = Integer.parseInt(time[2]);
+		int hour = Integer.parseInt(strTime.substring(0, 2));
+		int minute = Integer.parseInt(strTime.substring(3, 5));
+		int second = Integer.parseInt(strTime.substring(6, 8));
 
 		return hour * 3600 + minute * 60 + second;
 	}
@@ -60,19 +59,22 @@ public class Prob5
 		return times.stream().sorted().mapToInt(Integer::intValue).toArray();
 	}
 
+	private Map<Integer, Integer> createTimePointMap(int[] timePoints)
+	{
+		Map<Integer, Integer> map = new HashMap<>();
+		for (int i = 0; i < timePoints.length; i++)
+			map.put(timePoints[i], i);
+		return map;
+	}
+
 	private int getIndexOfTime(int time)
 	{
-		// TODO: 효율
-		for (int i = 0; i < timePoints.length; i++)
-		{
-			if (timePoints[i] == time) return i;
-		}
-		return -1;
+		return timePointMap.get(time);
 	}
 
 	public String solve()
 	{
-		if (playTime == adTime) return getStringTime(0);
+		if (playTime <= adTime) return getStringTime(0);
 
 		int[] sumTimes = new int[timePoints.length - 1];
 		for (TimeStartEnd log : logs)
