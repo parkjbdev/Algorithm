@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Prob5
 {
-	boolean debug = false;
+	boolean debug = true;
 	int playTime, adTime;
 	TimeStartEnd[] logs;
 	int[] timePoints;
@@ -72,6 +72,25 @@ public class Prob5
 		return timePointMap.get(time);
 	}
 
+	private int calcAccTime(int[] sumTimes, int startIdx)
+	{
+		int accTime = 0;
+		int accAllTime = 0;
+
+		for (int endIdx = startIdx + 1; endIdx < sumTimes.length; endIdx++)
+		{
+			int timeDiff = timePoints[endIdx] - timePoints[endIdx - 1];
+			accTime += timeDiff;
+			if (accTime < adTime) accAllTime += timeDiff * sumTimes[endIdx];
+			else {
+				accAllTime += (adTime - accTime) * sumTimes[endIdx];
+				break;
+			}
+		}
+
+		return accAllTime;
+	}
+
 	public String solve()
 	{
 		if (playTime <= adTime) return getStringTime(0);
@@ -87,31 +106,9 @@ public class Prob5
 		int result = 0;
 		int max = 0;
 
-		for (int i = 0; i < sumTimes.length; i++)
+		for (int startIdx = 0; startIdx < sumTimes.length; startIdx++)
 		{
-			int startIdx = i;
-			int endIdx = i + 1;
-
-			// Calculate End Index
-			if (debug) System.out.println("start: [" + startIdx + ", " + timePoints[startIdx] + "]");
-			while (endIdx + 1 < timePoints.length
-					&& timePoints[endIdx] - timePoints[startIdx] < adTime)
-				endIdx++;
-			if (timePoints[endIdx] - timePoints[startIdx] < adTime) continue;
-			if (debug) System.out.println("end: [" + endIdx + ", " + timePoints[endIdx] + "]");
-
-			// Calculate Accumulated Time
-			int leftTime = adTime;
-			int accTime = 0;
-			for (int j = startIdx; j < endIdx; j++)
-			{
-				int timeDiff = timePoints[j + 1] - timePoints[j];
-				leftTime -= timeDiff;
-				if(leftTime < 0)	accTime += sumTimes[j] * (leftTime + timeDiff);
-				else accTime += sumTimes[j] * (timePoints[j + 1] - timePoints[j]);
-			}
-
-			if (debug) System.out.println("accTime: " + accTime);
+			int accTime = calcAccTime(sumTimes, startIdx);
 
 			// Find Maximizing result
 			if (accTime > max)
@@ -119,8 +116,6 @@ public class Prob5
 				max = accTime;
 				result = timePoints[startIdx];
 			}
-			if (debug)
-				System.out.println("[diff, sum, max]: [" + (timePoints[endIdx] - timePoints[startIdx]) + ", " + accTime + ", " + max + "]");
 		}
 
 		return getStringTime(result);
