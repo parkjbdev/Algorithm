@@ -128,7 +128,7 @@ public class Solution
 		for(int i = 0;i < 3;i++)
 		{
 			beforeTime = System.currentTimeMillis();
-			System.out.println(new Prob5(play_time[i], adv_time[i], logs[i]).solve());
+			System.out.println(new Prob5_TwoPointer(play_time[i], adv_time[i], logs[i]).solve());
 			afterTime = System.currentTimeMillis();
 			System.out.println((afterTime - beforeTime) + " ms");
 		}
