@@ -1,7 +1,7 @@
-public class Prob5_TwoPointer
+public class Prob5_Sliding
 {
 	int playTime, adTime;
-	long[] timeLine;
+	int[] timeLine;
 
 	private int getIntTime(String strTime)
 	{
@@ -23,47 +23,36 @@ public class Prob5_TwoPointer
 				String.format("%02d", second);
 	}
 
-	public Prob5_TwoPointer(String playTime, String adTime, String[] logs)
+	public Prob5_Sliding(String playTime, String adTime, String[] logs)
 	{
 		this.playTime = getIntTime(playTime);
 		this.adTime = getIntTime(adTime);
-		this.timeLine = new long[this.playTime + 1];
+		this.timeLine = new int[this.playTime + 1];
 
 		for (String log : logs)
 		{
 			int start = getIntTime(log.substring(0, 8));
 			int end = getIntTime(log.substring(9));
-			for (int i = start; i <= end; i++) timeLine[i]++;
+			for (int i = start; i < end; i++) timeLine[i]++;
 		}
 	}
 
 	public String solve()
 	{
-		if(playTime <= adTime)	return getStringTime(0);
 		int result = 0;
-		int max = 0;
+		long max, sum = 0;
 
-		int startIdx = 0;
-		int endIdx = 1;
-		int sum = 0;
+		for (int i = 0; i < adTime; i++)	sum += timeLine[i];
+		max = sum;
 
-		while(startIdx < timeLine.length && endIdx < timeLine.length)
+		for (int start = 0; start + adTime < timeLine.length; start++)
 		{
-			if(endIdx - startIdx < adTime)
+			sum = sum - timeLine[start] + timeLine[start + adTime];
+
+			if (max < sum)
 			{
-				if(endIdx + 1 >= timeLine.length)	break;
-				endIdx++;
-				sum += timeLine[endIdx];
-			}
-			else
-			{
-				if(max < sum)
-				{
-					max = sum;
-					result = startIdx;
-				}
-				sum -= timeLine[startIdx];
-				startIdx++;
+				max = sum;
+				result = start + 1;
 			}
 		}
 
