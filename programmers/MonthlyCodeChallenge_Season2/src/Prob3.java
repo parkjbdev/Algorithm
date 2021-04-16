@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 class Prob3
 {
@@ -94,16 +96,21 @@ class Prob3
 	{
 		if (answer != 0) return -1;
 
-		while (!isAllZero())
+		int[] priority = new int[nodes.length];
+		for (int i = 0; i < priority.length; i++) priority[i] = i;
+		priority = Arrays.stream(priority)
+				.boxed()
+				.sorted(Comparator.comparingInt(a -> nodes[a].getAdjacentCount()))
+				.mapToInt(i -> i)
+				.toArray();
+
+		for (int i: priority)
 		{
-			for (int i = 0; i < nodes.length; i++)
-			{
-				if (isAllZero()) break;
-				if (nodes[i].getAdjacentCount() != 1) continue;
-				answer += Math.abs(nodes[i].getWeight());
-				swapWeightAsZero(i);
-				isolateNode(i);
-			}
+			if(isAllZero())	break;
+			if (nodes[i].getAdjacentCount() != 1) continue;
+			answer += Math.abs(nodes[i].getWeight());
+			swapWeightAsZero(i);
+			isolateNode(i);
 		}
 
 		return answer;
@@ -118,7 +125,7 @@ class Prob3
 		boolean wasAdjNodeZero = nodes[adjNode].getWeight() == 0;
 
 		nodes[adjNode].increaseWeight(nodes[nodeIdx].setZeroWeight());
-		if(!wasAdjNodeZero && nodes[adjNode].isZero())	zeroCount++;
+		if (!wasAdjNodeZero && nodes[adjNode].isZero()) zeroCount++;
 
 		return true;
 	}
