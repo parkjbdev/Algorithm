@@ -1,6 +1,13 @@
 class Prob1
 {
-	public int solution(int[] absolutes, boolean[] signs)
+	private final int[] absolutes;
+	private final boolean[] signs;
+	public Prob1(int[] absolutes, boolean[] signs)
+	{
+		this.absolutes = absolutes;
+		this.signs = signs;
+	}
+	public int solve()
 	{
 		int sum = 0;
 		for (int i = 0; i < absolutes.length; i++)
