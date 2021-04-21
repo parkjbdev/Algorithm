@@ -1,65 +1,74 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.*;
 
 class Prob3
 {
 	class Node
 	{
-		private int weight;
-		private final ArrayList<Integer> adjacentList = new ArrayList<>();
+		private class Weight
+		{
+			private int weight;
+			Weight(int weight)
+			{
+				this.weight = weight;
+			}
+			public boolean isZero()
+			{
+				return weight == 0;
+			}
+			public int get()
+			{
+				return weight;
+			}
+			public int increase(int increment)
+			{
+				weight += increment;
+				return weight;
+			}
+			public int setZero()
+			{
+				int tmp = weight;
+				weight = 0;
+				return tmp;
+			}
+		}
+		public final Weight weight;
+		private final Set<Integer> adjacents = new HashSet<>();
 
 		public Node(int weight)
 		{
-			this.weight = weight;
-		}
-
-		public int getWeight()
-		{
-			return weight;
-		}
-
-		public int increaseWeight(int increment)
-		{
-			weight += increment;
-			return weight;
-		}
-
-		public int setZeroWeight()
-		{
-			int tmp = weight;
-			weight = 0;
-			return tmp;
-		}
-
-		public ArrayList<Integer> getAdjacentList()
-		{
-			return adjacentList;
+			this.weight = new Weight(weight);
 		}
 
 		public int getAdjacentCount()
 		{
-			return adjacentList.size();
+			return adjacents.size();
 		}
 
 		public void addEdge(int nodeIdx)
 		{
-			adjacentList.add(nodeIdx);
+			adjacents.add(nodeIdx);
 		}
 
 		public void deleteEdge(int nodeIdx)
 		{
-			adjacentList.remove(Integer.valueOf(nodeIdx));
+			adjacents.remove(nodeIdx);
 		}
 
-		public boolean isZero()
-		{
-			return weight == 0;
+		public boolean isLeaf() {
+			return getAdjacentCount() == 1;
 		}
 
-		public boolean isDeletable()
+		public boolean isolate()
 		{
-			return weight == 0 && getAdjacentCount() == 1;
+			if(!isLeaf() || !weight.isZero()) return false;
+			adjacents.clear();
+
+			return true;
+		}
+
+		public int peekAdjacentIndex()
+		{
+			return (int) adjacents.toArray()[0];
 		}
 	}
 
@@ -108,7 +117,7 @@ class Prob3
 		{
 			if(isAllZero())	break;
 			if (nodes[i].getAdjacentCount() != 1) continue;
-			answer += Math.abs(nodes[i].getWeight());
+			answer += Math.abs(nodes[i].weight.get());
 			swapWeightAsZero(i);
 			isolateNode(i);
 		}
@@ -119,24 +128,25 @@ class Prob3
 	private boolean swapWeightAsZero(int nodeIdx)
 	{
 		if (nodes[nodeIdx].getAdjacentCount() != 1) return false;
-		if (nodes[nodeIdx].getWeight() != 0) zeroCount++;
+		if (nodes[nodeIdx].weight.get() != 0) zeroCount++;
 
-		int adjNode = nodes[nodeIdx].getAdjacentList().get(0);
-		boolean wasAdjNodeZero = nodes[adjNode].getWeight() == 0;
+		int adjNode = nodes[nodeIdx].peekAdjacentIndex();
+		boolean wasAdjNodeZero = nodes[adjNode].weight.get() == 0;
 
-		nodes[adjNode].increaseWeight(nodes[nodeIdx].setZeroWeight());
-		if (!wasAdjNodeZero && nodes[adjNode].isZero()) zeroCount++;
+		nodes[adjNode].weight.increase(nodes[nodeIdx].weight.setZero());
+		if (!wasAdjNodeZero && nodes[adjNode].weight.isZero()) zeroCount++;
 
 		return true;
 	}
 
 	private boolean isolateNode(int nodeIdx)
 	{
-		if (!nodes[nodeIdx].isDeletable()) return false;
+		if (!nodes[nodeIdx].weight.isZero() || !nodes[nodeIdx].isLeaf())
+			return false;
 
-		int adjacentIdx = nodes[nodeIdx].adjacentList.get(0);
+		int adjacentIdx = nodes[nodeIdx].peekAdjacentIndex();
 
-		nodes[nodeIdx].deleteEdge(adjacentIdx);
+		nodes[nodeIdx].isolate();
 		nodes[adjacentIdx].deleteEdge(nodeIdx);
 
 		return true;
