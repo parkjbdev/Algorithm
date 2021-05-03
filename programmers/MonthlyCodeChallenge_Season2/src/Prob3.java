@@ -6,7 +6,7 @@ class Prob3
 	{
 		private class Weight
 		{
-			private int weight;
+			private long weight;
 			Weight(int weight)
 			{
 				this.weight = weight;
@@ -15,24 +15,21 @@ class Prob3
 			{
 				return weight == 0;
 			}
-			public int get()
-			{
-				return weight;
-			}
-			public int increase(int increment)
+			public void increase(long increment)
 			{
 				weight += increment;
-				return weight;
 			}
-			public int setZero()
+			public void setZero()
 			{
-				int tmp = weight;
 				weight = 0;
-				return tmp;
+			}
+			public long get()
+			{
+				return weight;
 			}
 		}
 		public final Weight weight;
-		private final Set<Integer> adjacents = new HashSet<>();
+		private final Set<Integer> adjacent = new HashSet<>();
 
 		public Node(int weight)
 		{
@@ -41,47 +38,45 @@ class Prob3
 
 		public int getAdjacentCount()
 		{
-			return adjacents.size();
+			return adjacent.size();
 		}
 
 		public void addEdge(int nodeIdx)
 		{
-			adjacents.add(nodeIdx);
+			adjacent.add(nodeIdx);
 		}
 
 		public void deleteEdge(int nodeIdx)
 		{
-			adjacents.remove(nodeIdx);
+			adjacent.remove(nodeIdx);
 		}
 
 		public boolean isLeaf() {
 			return getAdjacentCount() == 1;
 		}
 
-		public boolean isolate()
+		public void isolate()
 		{
-			if(!isLeaf() || !weight.isZero()) return false;
-			adjacents.clear();
-
-			return true;
+			if(!isLeaf() || !weight.isZero()) return;
+			adjacent.clear();
 		}
 
 		public int peekAdjacentIndex()
 		{
-			return (int) adjacents.toArray()[0];
+			return (int) adjacent.toArray()[0];
 		}
 	}
 
 	private int zeroCount = 0;
 	private final Node[] nodes;
-	private int answer = 0;
+	private long answer = 0;
 
 	public Prob3(int[] a, int[][] edges)
 	{
 		// Initialize Nodes with weight
 		// Initialize zeroCount & Check availability
 		nodes = new Node[a.length];
-		int sum = 0;
+		long sum = 0;
 		for (int i = 0; i < nodes.length; i++)
 		{
 			nodes[i] = new Node(a[i]);
@@ -96,14 +91,16 @@ class Prob3
 			nodes[edge[0]].addEdge(edge[1]);
 			nodes[edge[1]].addEdge(edge[0]);
 		}
-
-		for (int i = 0; i < nodes.length; i++)
-			isolateNode(i);
 	}
 
-	public int solve()
+	public long solve()
 	{
 		if (answer != 0) return -1;
+
+		// Isolate zero weight nodes
+		for (int i = 0; i < nodes.length; i++)
+			if(nodes[i].weight.isZero() && nodes[i].isLeaf())
+				isolateNode(i);
 
 		int[] priority = new int[nodes.length];
 		for (int i = 0; i < priority.length; i++) priority[i] = i;
@@ -116,40 +113,45 @@ class Prob3
 		for (int i: priority)
 		{
 			if(isAllZero())	break;
-			if (nodes[i].getAdjacentCount() != 1) continue;
-			answer += Math.abs(nodes[i].weight.get());
-			swapWeightAsZero(i);
-			isolateNode(i);
+			if (!nodes[i].isLeaf()) continue;
+
+			answer += swapWeightAsZero(i);
+			if(nodes[i].weight.isZero()) isolateNode(i);
 		}
 
 		return answer;
 	}
 
-	private boolean swapWeightAsZero(int nodeIdx)
+	private long swapWeightAsZero(int nodeIdx)
 	{
-		if (nodes[nodeIdx].getAdjacentCount() != 1) return false;
-		if (nodes[nodeIdx].weight.get() != 0) zeroCount++;
+		Node node = nodes[nodeIdx];
+		Node adjNode = nodes[node.peekAdjacentIndex()];
 
-		int adjNode = nodes[nodeIdx].peekAdjacentIndex();
-		boolean wasAdjNodeZero = nodes[adjNode].weight.get() == 0;
+		// Check Previous Node zeroWeight stat
+		boolean wasZeroNode = node.weight.isZero();
+		boolean wasZeroAdjNode = adjNode.weight.isZero();
 
-		nodes[adjNode].weight.increase(nodes[nodeIdx].weight.setZero());
-		if (!wasAdjNodeZero && nodes[adjNode].weight.isZero()) zeroCount++;
+		// Swap Weight
+		long increment = node.weight.get();
+		node.weight.setZero();
+		adjNode.weight.increase(increment);
 
-		return true;
+		// Calculate zeroCount
+		boolean isZeroAdjNode = adjNode.weight.isZero();
+
+		if (!wasZeroNode) zeroCount++;
+		if (!wasZeroAdjNode && isZeroAdjNode) zeroCount++;
+
+		return Math.abs(increment);
 	}
 
-	private boolean isolateNode(int nodeIdx)
+	private void isolateNode(int nodeIdx)
 	{
-		if (!nodes[nodeIdx].weight.isZero() || !nodes[nodeIdx].isLeaf())
-			return false;
+		Node node = nodes[nodeIdx];
+		Node adjNode = nodes[node.peekAdjacentIndex()];
 
-		int adjacentIdx = nodes[nodeIdx].peekAdjacentIndex();
-
-		nodes[nodeIdx].isolate();
-		nodes[adjacentIdx].deleteEdge(nodeIdx);
-
-		return true;
+		node.isolate();
+		adjNode.deleteEdge(nodeIdx);
 	}
 
 	private boolean isAllZero()
