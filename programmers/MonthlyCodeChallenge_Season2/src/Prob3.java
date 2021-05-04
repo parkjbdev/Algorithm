@@ -2,32 +2,38 @@ import java.util.*;
 
 class Prob3
 {
-	class Node
+	static class Node
 	{
-		private class Weight
+		private static class Weight
 		{
 			private long weight;
+
 			Weight(int weight)
 			{
 				this.weight = weight;
 			}
+
 			public boolean isZero()
 			{
 				return weight == 0;
 			}
+
 			public void increase(long increment)
 			{
 				weight += increment;
 			}
+
 			public void setZero()
 			{
 				weight = 0;
 			}
+
 			public long get()
 			{
 				return weight;
 			}
 		}
+
 		public final Weight weight;
 		private final Set<Integer> adjacent = new HashSet<>();
 
@@ -51,13 +57,14 @@ class Prob3
 			adjacent.remove(nodeIdx);
 		}
 
-		public boolean isLeaf() {
+		public boolean isLeaf()
+		{
 			return getAdjacentCount() == 1;
 		}
 
 		public void isolate()
 		{
-			if(!isLeaf() || !weight.isZero()) return;
+			if (!isLeaf()) return;
 			adjacent.clear();
 		}
 
@@ -97,29 +104,30 @@ class Prob3
 	{
 		if (answer != 0) return -1;
 
-		// Isolate zero weight nodes
-		for (int i = 0; i < nodes.length; i++)
-			if(nodes[i].weight.isZero() && nodes[i].isLeaf())
-				isolateNode(i);
-
-		int[] priority = new int[nodes.length];
-		for (int i = 0; i < priority.length; i++) priority[i] = i;
-		priority = Arrays.stream(priority)
-				.boxed()
-				.sorted(Comparator.comparingInt(a -> nodes[a].getAdjacentCount()))
-				.mapToInt(i -> i)
-				.toArray();
-
-		for (int i: priority)
-		{
-			if(isAllZero())	break;
-			if (!nodes[i].isLeaf()) continue;
-
-			answer += swapWeightAsZero(i);
-			if(nodes[i].weight.isZero()) isolateNode(i);
-		}
+		boolean[] isVisit = new boolean[nodes.length];
+		dfs(isVisit, 0);
 
 		return answer;
+	}
+
+	private void dfs(boolean[] isVisit, int nodeIdx)
+	{
+		if (isAllZero()) return;
+
+		isVisit[nodeIdx] = true;
+
+		Integer[] adjacent = nodes[nodeIdx].adjacent.toArray(new Integer[0]);
+		for (int integer : adjacent)
+		{
+			if (!isVisit[integer])
+				dfs(isVisit, integer);
+		}
+
+		if (nodes[nodeIdx].isLeaf())
+		{
+			answer += swapWeightAsZero(nodeIdx);
+			isolateNode(nodeIdx);
+		}
 	}
 
 	private long swapWeightAsZero(int nodeIdx)
@@ -157,5 +165,46 @@ class Prob3
 	private boolean isAllZero()
 	{
 		return zeroCount == nodes.length;
+	}
+}
+
+class Prob3_Compact
+{
+	static class Node
+	{
+		ArrayList<Integer> adjacentList = new ArrayList<>();
+	}
+
+	static Node[] nodes;
+	static long answer = 0;
+	static long[] weight;
+
+	public Prob3_Compact(int[] a, int[][] edges)
+	{
+		weight = Arrays.stream(a).asLongStream().toArray();
+		nodes = new Node[a.length];
+		for (int i = 0; i < nodes.length; i++) nodes[i] = new Node();
+
+		for (int[] edge : edges)
+		{
+			nodes[edge[0]].adjacentList.add(edge[1]);
+			nodes[edge[1]].adjacentList.add(edge[0]);
+		}
+	}
+
+	public static long solve()
+	{
+		if (Arrays.stream(weight).sum() != 0) return -1;
+		dfs(0, 0);
+		return answer;
+	}
+
+	private static void dfs(int current, int parent)
+	{
+		for (int node : nodes[current].adjacentList)
+			if (node != parent) dfs(node, current);
+
+		weight[parent] += weight[current];
+		answer += Math.abs(weight[current]);
 	}
 }
