@@ -1,0 +1,12 @@
+{
+  "name": "AlgoStudy",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/parkjbdev/AlgoStudy.git",
+  "author": "parkjbdev <parkjbdev@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.4"
+  }
+}
