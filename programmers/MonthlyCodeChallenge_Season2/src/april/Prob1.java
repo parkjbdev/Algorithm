@@ -1,3 +1,5 @@
+package april;
+
 class Prob1
 {
 	private final int[] absolutes;

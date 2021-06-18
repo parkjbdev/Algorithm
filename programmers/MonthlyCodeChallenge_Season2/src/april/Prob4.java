@@ -1,3 +1,5 @@
+package april;
+
 class Prob4 {
 	private final int[][] adjacentMatrix;
 	private final long[] queries;
