@@ -4,7 +4,6 @@ public class Prog42862 {
   public final int n;
   public final int[] lost;
   public final int[] reserve;
-  private int answer;
   private final ArrayList<Integer> lostList = new ArrayList<>();
   private final ArrayList<Integer> reserveList = new ArrayList<>();
 
@@ -17,21 +16,26 @@ public class Prog42862 {
   }
 
   public int solve() {
-    answer = n - lost.length;
-
     for (int lostStudent : lost)
-      if (reserveList.contains(lostStudent)) answer(lostStudent);
+      if (reserveList.contains(lostStudent)) remove(lostStudent, lostStudent);
 
-    for (int lostStudent : lostList)
-      if (reserveList.contains(lostStudent - 1)) answer(lostStudent - 1);
-      else if (reserveList.contains(lostStudent + 1)) answer(lostStudent + 1);
+    int[] tmpLost = lostList.stream().mapToInt(i -> i).toArray();
 
-    return answer;
+    for (int lostStudent : tmpLost)
+      if (isValidStudent(lostStudent - 1) && reserveList.contains(lostStudent - 1))
+        remove(lostStudent - 1, lostStudent);
+      else if (isValidStudent(lostStudent + 1) && reserveList.contains(lostStudent + 1))
+        remove(lostStudent + 1, lostStudent);
+
+    return n - lostList.size();
   }
 
-  private void answer(int removeStudent) {
-    answer++;
-    reserveList.remove(Integer.valueOf(removeStudent));
-    lostList.remove(Integer.valueOf(removeStudent));
+  private boolean isValidStudent(int student) {
+    return 1 <= student && student <= n;
+  }
+
+  private void remove(int reserveStudent, int lostStudent) {
+    reserveList.remove(Integer.valueOf(reserveStudent));
+    lostList.remove(Integer.valueOf(lostStudent));
   }
 }
