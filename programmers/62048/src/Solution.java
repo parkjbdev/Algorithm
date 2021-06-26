@@ -1,23 +1,6 @@
-public class Solution
-{
-	public static void main(String[] args)
-	{
-
-	}
-
-	public long solution(int w, int h)
-	{
-		if (w == h) return w;
-		if (w < h)
-		{
-			int tmp = h;
-			h = w;
-			w = tmp;
-		}
-		long answer = 0;
-
-
-
-		return answer;
+import java.math.BigInteger;
+public class Solution {
+	public long solution(int w, int h) {
+		return (long)w * (long)h - (w + h - BigInteger.valueOf(w).gcd(BigInteger.valueOf(h)).longValue());
 	}
 }
