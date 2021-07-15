@@ -1,18 +1,17 @@
-import java.util.Arrays;
-import java.util.OptionalInt;
+import java.util.*;
 
 public class Solution {
   public int solution(int n, int[][] edge) {
-    return new Prob49189(n, edge).solve();
+    return new Prob49189_BFS(n, edge).solve();
   }
 }
 
-class Prob49189 {
+class Prob49189_Dijkstra {
   public final int N;
   public final boolean[][] isConnect;
   private final int MAX_VALUE = 1000000;
 
-  public Prob49189(int n, int[][] edge) {
+  public Prob49189_Dijkstra(int n, int[][] edge) {
     this.N = n;
 
     // Adjacent Matrix
@@ -55,12 +54,64 @@ class Prob49189 {
     int[] arr = dijkstra(0);
     OptionalInt tmp = Arrays.stream(arr).max();
     int maxValue = tmp.isPresent() ? tmp.getAsInt() : -1;
-    System.out.println("max = " + maxValue);
 
-    int cnt = 0;
-    for (int i = 0; i < N; i++)
-      if (arr[i] == maxValue) cnt++;
+    return (int) Arrays.stream(arr).filter(n -> n == maxValue).count();
+  }
+}
 
-    return cnt;
+class Prob49189_BFS {
+  public final int N;
+  public final ArrayList<Integer>[] adjacentList;
+  private final Queue<Integer> queue = new LinkedList<>();
+  boolean[] isVisit;
+  private int[] minDistance;
+
+  public Prob49189_BFS(int n, int[][] edge) {
+    this.N = n;
+    adjacentList = new ArrayList[n];
+    isVisit = new boolean[N];
+    minDistance = new int[N];
+
+    for (int i = 0; i < n; i++) adjacentList[i] = new ArrayList<>();
+
+    for (int[] node : edge) {
+      adjacentList[node[0] - 1].add(node[1] - 1);
+      adjacentList[node[1] - 1].add(node[0] - 1);
+    }
+  }
+
+  public int solve() {
+    bfs(0);
+    OptionalInt tmpMax = Arrays.stream(minDistance).max();
+    int max = tmpMax.isPresent() ? tmpMax.getAsInt() : 0;
+    return (int) Arrays.stream(minDistance).filter(a -> a == max).count();
+  }
+
+  private void bfs(int start) {
+    int cntVisit = 0;
+    Queue<Integer> levelQueue = new LinkedList<>();
+
+    visit(start);
+    levelQueue.offer(0);
+
+    while (!queue.isEmpty()) {
+      if (cntVisit >= N) break;
+
+      int currentIdx = queue.poll();
+      int level = levelQueue.poll();
+      minDistance[currentIdx] = level;
+
+      for (int nextIdx : adjacentList[currentIdx])
+        if (!isVisit[nextIdx]) {
+          visit(nextIdx);
+          levelQueue.offer(level + 1);
+          cntVisit++;
+        }
+    }
+  }
+
+  private void visit(int idx) {
+    queue.offer(idx);
+    isVisit[idx] = true;
   }
 }
