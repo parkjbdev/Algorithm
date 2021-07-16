@@ -38,6 +38,7 @@ return 하도록 solution 함수를 작성하세요.
 ***
 
 ## 풀이
+
 ### 알고리즘 분류: DP
 
 ★을 모든 가능한 사칙연산이라고 하자.
@@ -46,10 +47,13 @@ return 하도록 solution 함수를 작성하세요.
 
 - 5를 1번만 사용하여 만들 수 있는 수 (1번 Set): 5
 - 5를 2번만 사용하여 만들 수 있는 수 (2번 Set): 55, (1번 Set의 모든 원소) ★ (1번 Set의 모든 원소)
-- 5를 3번만 사용하여 만들 수 있는 수 (3번 Set): 555, (1번 Set의 모든 원소) ★ (2번 Set의 모든 원소), (2번 Set의 모든 원소) ★ (1번 Set의 모든 원소) (여기서 (55 + 5) 만들어짐)
-- 5를 4번만 사용하여 만들 수 있는 수 (3번 Set): 5555, (1번 Set의 모든 원소) ★ (3번 Set의 모든 원소), (2번 Set의 모든 원소) ★ (2번 Set의 모든 원소), (3번 Set의 모든 원소) ★ (1번 Set의 모든 원소) (여기서 (55 + 5) / 5 만들어짐)
+- 5를 3번만 사용하여 만들 수 있는 수 (3번 Set): 555, (1번 Set의 모든 원소) ★ (2번 Set의 모든 원소), (2번 Set의 모든 원소) ★ (1번 Set의 모든 원소) (여기서 (55 +
+  5) 만들어짐)
+- 5를 4번만 사용하여 만들 수 있는 수 (3번 Set): 5555, (1번 Set의 모든 원소) ★ (3번 Set의 모든 원소), (2번 Set의 모든 원소) ★ (2번 Set의 모든 원소), (3번 Set의
+  모든 원소) ★ (1번 Set의 모든 원소) (여기서 (55 + 5) / 5 만들어짐)
 
 즉 이를 일반화하면 다음과 같다.
+
 #### `N`를 n번만 사용하여 만들 수 있는 수 (n번 Set)
 
 - (`N`가 n개 있는 수)
@@ -66,17 +70,20 @@ return 하도록 solution 함수를 작성하세요.
 - `N`을 n번만 사용하여 만들 수 있는 모든 수를 생성, 원하는 `number`가 존재하는지 확인 - 있으면 정답, 없으면 -1
 
 ### 구현
+
 `arithmeticAddSet` 메소드는 ★을 수행하는 연산자이다.
 
 `N`가 n개 있는 수 생성 및 추가
+
 ```java 
 int repeated = Integer.parseInt(Integer.toString(N).repeat(nTimes));
 sets[setIdx].add(repeated);
 ```
 
 서로 다른 Set끼리 사칙연산해서 추가
+
 ```java
-for (int i = 1; i < nTimes; i++)
-  sets[setIdx].addAll(arithmeticAddSet(sets[i - 1], sets[nTimes - i - 1]));
+for(int i=1;i<nTimes; i++)
+        sets[setIdx].addAll(arithmeticAddSet(sets[i-1],sets[nTimes-i-1]));
 ```
 
