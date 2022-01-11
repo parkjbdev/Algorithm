@@ -93,5 +93,6 @@ modules.xml
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all
 
-
+.DS_STORE
+.vscode/
 node_modules
